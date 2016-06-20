@@ -1,5 +1,5 @@
-
 void initAudioOut(uint16_t* buffer, uint32_t size);
+
 void initAudioOutDAC(void);
 void initAudioOutGPIO(void);
 void initAudioOutTIM(void);
@@ -29,7 +29,7 @@ void initAudioOutGPIO(void)
 	GPIO_Init(GPIOA, &GPIOStruct);
 }
 
-//Timer 6 Runs ar 84MHz
+//Timer 6 Runs at 84MHz
 void initAudioOutTIM(void)
 {
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM6, ENABLE);
@@ -47,6 +47,7 @@ void initAudioOutTIM(void)
 void initAudioOutDMA(uint16_t* buffer, uint32_t size)
 {
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA1, ENABLE);
+	DMA_DeInit(DMA1_Stream5);
 	DMA_InitTypeDef DMAStruct;
 	DMA_StructInit(&DMAStruct);
 	DMAStruct.DMA_Channel = DMA_Channel_7;
@@ -59,7 +60,8 @@ void initAudioOutDMA(uint16_t* buffer, uint32_t size)
 	DMAStruct.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
 	DMAStruct.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
 	DMAStruct.DMA_Mode = DMA_Mode_Normal;
-	DMAStruct.DMA_FIFOMode = DMA_FIFOMode_Disable;
+	DMAStruct.DMA_FIFOMode = DMA_FIFOMode_Enable;
+	DMAStruct.DMA_FIFOThreshold = DMA_FIFOThreshold_HalfFull;
 	DMAStruct.DMA_Priority = DMA_Priority_High;
 	DMAStruct.DMA_MemoryBurst = DMA_MemoryBurst_Single;
 	DMAStruct.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
