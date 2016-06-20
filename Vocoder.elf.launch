@@ -20,7 +20,7 @@
 <booleanAttribute key="com.atollic.hardwaredebug.launch.useRemoteTarget" value="true"/>
 <stringAttribute key="com.atollic.hardwaredebug.launch.verifyCommands" value="# Set flash parallelism mode to 32, 16, or 8 bit when using STM32 F2/F4 microcontrollers&#13;&#10;# 2=32 bit, 1=16 bit and 0=8 bit parallelism mode&#13;&#10;monitor flash set_parallelism_mode 2&#13;&#10;&#13;&#10;# Set character encoding&#13;&#10;set host-charset CP1252&#13;&#10;set target-charset CP1252&#13;&#10;&#13;&#10;# Load the program executable&#13;&#10;load&#9;&#9;&#13;&#10;&#13;&#10;# Reset the chip to get to a known state. Remove &quot;monitor reset&quot; command &#13;&#10;#  if the code is not located at default address and does not run by reset. &#13;&#10;monitor reset&#13;&#10;&#13;&#10;# Enable Debug connection in low power modes (DBGMCU-&gt;CR)&#13;&#10;set *0xE0042004 = (*0xE0042004) | 0x7&#13;&#10;&#13;&#10;# The executable starts automatically"/>
 <booleanAttribute key="com.atollic.hardwaredebug.stlink.enable_logging" value="false"/>
-<stringAttribute key="com.atollic.hardwaredebug.stlink.log_file" value="C:\Users\Shaylin Chetty\Atollic\TrueSTUDIO\Workspace\Vocoder\Debug\st-link_gdbserver_log.txt"/>
+<stringAttribute key="com.atollic.hardwaredebug.stlink.log_file" value="C:\Users\Shaylin Chetty\Atollic\TrueSTUDIO\ARM_workspace_5.5\Vocoder\Debug\st-link_gdbserver_log.txt"/>
 <booleanAttribute key="com.atollic.hardwaredebug.stlink.verify_flash" value="false"/>
 <stringAttribute key="org.eclipse.cdt.debug.mi.core.DEBUG_NAME" value="${TOOLCHAIN_PATH}/arm-atollic-eabi-gdb"/>
 <stringAttribute key="org.eclipse.cdt.debug.mi.core.commandFactory" value="Standard (Windows)"/>

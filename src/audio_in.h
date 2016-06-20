@@ -24,7 +24,7 @@ void initAudioInTIM(void)
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2,ENABLE);
 
 	TIM_TimeBaseInitTypeDef TimerStruct;
-	TimerStruct.TIM_Period = 2625-1;
+	TimerStruct.TIM_Period = 2625*4-1;
 	TimerStruct.TIM_Prescaler = 1-1;
 	TimerStruct.TIM_CounterMode = TIM_CounterMode_Up;
 	TimerStruct.TIM_ClockDivision = TIM_CKD_DIV1;
@@ -36,7 +36,6 @@ void initAudioInTIM(void)
 void initAudioInADC(void)
 {
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1,ENABLE);
-
 	ADC_CommonInitTypeDef ADCCommonStruct;
 	ADCCommonStruct.ADC_Mode = ADC_Mode_Independent;
 	ADCCommonStruct.ADC_DMAAccessMode = ADC_DMAAccessMode_Disabled;
@@ -98,9 +97,13 @@ void initAudioInDMA(uint16_t* buffer, uint32_t size)
 
 void initAudioIn(uint16_t* buffer, uint32_t size)
 {
+	TIM_DeInit(TIM2);
+	ADC_DeInit();
+	DMA_DeInit(DMA2_Stream0);
 	initAudioInGPIO();
 	initAudioInTIM();
 	initAudioInADC();
 	initAudioInNVIC();
 	initAudioInDMA(buffer, size);
 }
+

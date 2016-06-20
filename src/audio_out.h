@@ -3,6 +3,7 @@ void initAudioOut(uint16_t* buffer, uint32_t size);
 void initAudioOutDAC(void);
 void initAudioOutGPIO(void);
 void initAudioOutTIM(void);
+void initAudioOutNVIC(void);
 void initAudioOutDMA(uint16_t* buffer, uint32_t size);
 
 void initAudioOutDAC(void)
@@ -34,7 +35,7 @@ void initAudioOutTIM(void)
 {
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM6, ENABLE);
 	TIM_TimeBaseInitTypeDef TimerStruct;
-	TimerStruct.TIM_Period = 2625-1;
+	TimerStruct.TIM_Period = 2625*4-1;
 	TimerStruct.TIM_Prescaler = 1-1;
 	TimerStruct.TIM_ClockDivision = TIM_CKD_DIV1;
 	TimerStruct.TIM_CounterMode = TIM_CounterMode_Up;
@@ -42,6 +43,16 @@ void initAudioOutTIM(void)
 	TIM_TimeBaseInit(TIM6, &TimerStruct);
 	TIM_SelectOutputTrigger(TIM6, TIM_TRGOSource_Update);
 	TIM_Cmd(TIM6, ENABLE);
+}
+
+void initAudioOutNVIC(void)
+{
+	NVIC_InitTypeDef NVICStruct;
+	NVICStruct.NVIC_IRQChannel = DMA1_Stream5_IRQn;
+	NVICStruct.NVIC_IRQChannelCmd = ENABLE;
+	NVICStruct.NVIC_IRQChannelPreemptionPriority=0;
+	NVICStruct.NVIC_IRQChannelSubPriority=0;
+	NVIC_Init(&NVICStruct);
 }
 
 void initAudioOutDMA(uint16_t* buffer, uint32_t size)
@@ -60,19 +71,23 @@ void initAudioOutDMA(uint16_t* buffer, uint32_t size)
 	DMAStruct.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
 	DMAStruct.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
 	DMAStruct.DMA_Mode = DMA_Mode_Normal;
-	DMAStruct.DMA_FIFOMode = DMA_FIFOMode_Enable;
-	DMAStruct.DMA_FIFOThreshold = DMA_FIFOThreshold_HalfFull;
+	DMAStruct.DMA_FIFOMode = DMA_FIFOMode_Disable;
 	DMAStruct.DMA_Priority = DMA_Priority_High;
 	DMAStruct.DMA_MemoryBurst = DMA_MemoryBurst_Single;
 	DMAStruct.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
+	DMA_ITConfig(DMA1_Stream5, DMA_IT_TC, ENABLE);
 	DMA_Init(DMA1_Stream5, &DMAStruct);
 	DMA_Cmd(DMA1_Stream5, ENABLE);
 }
 
 void initAudioOut(uint16_t* buffer, uint32_t size)
 {
+	DAC_DeInit();
+	TIM_DeInit(TIM6);
+	DMA_DeInit(DMA1_Stream5);
 	initAudioOutDAC();
 	initAudioOutGPIO();
 	initAudioOutTIM();
+	initAudioOutNVIC();
 	initAudioOutDMA(buffer,size);
 }
