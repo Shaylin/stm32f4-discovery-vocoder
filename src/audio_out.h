@@ -10,7 +10,7 @@ void initAudioOutDAC(void)
 {
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_DAC, ENABLE);
 	DAC_InitTypeDef DACStruct;
-	DACStruct.DAC_Trigger = DAC_Trigger_T6_TRGO;
+	DACStruct.DAC_Trigger = DAC_Trigger_T4_TRGO;
 	DACStruct.DAC_WaveGeneration = DAC_WaveGeneration_None;
 	DACStruct.DAC_OutputBuffer = DAC_OutputBuffer_Enable;
 	DAC_Init(DAC_Channel_1, &DACStruct);
@@ -30,19 +30,18 @@ void initAudioOutGPIO(void)
 	GPIO_Init(GPIOA, &GPIOStruct);
 }
 
-//Timer 6 Runs at 84MHz
+//Timer 4 Runs at 84MHz - Using 16000Hz sampling rate
 void initAudioOutTIM(void)
-{
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM6, ENABLE);
+{ //DO NOT USE TIMER 6 - ITS TRGO DOES NOT EXIST - IT SEEMS TO USE TIMER2's instead
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
 	TIM_TimeBaseInitTypeDef TimerStruct;
-	TimerStruct.TIM_Period = 2625*4-1;
+	TimerStruct.TIM_Period = 5250*2-1;
 	TimerStruct.TIM_Prescaler = 1-1;
 	TimerStruct.TIM_ClockDivision = TIM_CKD_DIV1;
 	TimerStruct.TIM_CounterMode = TIM_CounterMode_Up;
-	TimerStruct.TIM_RepetitionCounter = 0x0000;
-	TIM_TimeBaseInit(TIM6, &TimerStruct);
-	TIM_SelectOutputTrigger(TIM6, TIM_TRGOSource_Update);
-	TIM_Cmd(TIM6, ENABLE);
+	TIM_TimeBaseInit(TIM4, &TimerStruct);
+	TIM_SelectOutputTrigger(TIM4, TIM_TRGOSource_Update);
+	TIM_Cmd(TIM4, ENABLE);
 }
 
 void initAudioOutNVIC(void)
@@ -83,7 +82,7 @@ void initAudioOutDMA(uint16_t* buffer, uint32_t size)
 void initAudioOut(uint16_t* buffer, uint32_t size)
 {
 	DAC_DeInit();
-	TIM_DeInit(TIM6);
+	TIM_DeInit(TIM4);
 	DMA_DeInit(DMA1_Stream5);
 	initAudioOutDAC();
 	initAudioOutGPIO();

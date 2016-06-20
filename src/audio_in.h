@@ -19,12 +19,13 @@ void initAudioInGPIO(void)
 	GPIO_Init(GPIOC, &GPIOStruct);
 }
 
+//Timer 2 Runs at 84MHz - Using 16000Hz sampling rate
 void initAudioInTIM(void)
 {
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2,ENABLE);
 
 	TIM_TimeBaseInitTypeDef TimerStruct;
-	TimerStruct.TIM_Period = 2625*4-1;
+	TimerStruct.TIM_Period = 5250-1;
 	TimerStruct.TIM_Prescaler = 1-1;
 	TimerStruct.TIM_CounterMode = TIM_CounterMode_Up;
 	TimerStruct.TIM_ClockDivision = TIM_CKD_DIV1;
@@ -86,7 +87,7 @@ void initAudioInDMA(uint16_t* buffer, uint32_t size)
 	DMAStruct.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
 	DMAStruct.DMA_Mode = DMA_Mode_Normal;
 	DMAStruct.DMA_Priority = DMA_Priority_High;
-	DMAStruct.DMA_FIFOMode = DMA_FIFOMode_Enable;
+	DMAStruct.DMA_FIFOMode = DMA_FIFOMode_Disable;
 	DMAStruct.DMA_FIFOThreshold = DMA_FIFOThreshold_HalfFull;
 	DMAStruct.DMA_MemoryBurst = DMA_MemoryBurst_Single;
 	DMAStruct.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
