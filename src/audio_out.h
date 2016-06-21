@@ -35,7 +35,7 @@ void initAudioOutTIM(void)
 { //DO NOT USE TIMER 6 - ITS TRGO DOES NOT EXIST - IT SEEMS TO USE TIMER2's instead
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
 	TIM_TimeBaseInitTypeDef TimerStruct;
-	TimerStruct.TIM_Period = 5250*2-1;
+	TimerStruct.TIM_Period = 5250-1;
 	TimerStruct.TIM_Prescaler = 1-1;
 	TimerStruct.TIM_ClockDivision = TIM_CKD_DIV1;
 	TimerStruct.TIM_CounterMode = TIM_CounterMode_Up;
