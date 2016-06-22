@@ -9,7 +9,7 @@
 
 uint8_t inputDone = 1;
 uint8_t outputDone = 1;
-uint8_t processDone = 0;
+uint8_t process = 0;
 uint16_t* buffer;
 uint32_t size = 64000;
 
@@ -19,7 +19,7 @@ void DMA2_Stream0_IRQHandler(void)
 	{
 		DMA_ClearITPendingBit(DMA2_Stream0, DMA_IT_TCIF0);
 		inputDone = 1;
-		echo(buffer,size);
+		process = 1;
 	}
 }
 
@@ -56,6 +56,12 @@ int main(void)
 			inputDone = 0;
 			outputDone = 0;
 			initAudioIn(buffer, size);
+		}
+
+		if(process)
+		{
+			sineCarrier(buffer,size,100);
+			process = 0;
 		}
 
 		if(checkButton(0)==1)
