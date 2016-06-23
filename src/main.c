@@ -55,7 +55,7 @@ int main(void)
 		{
 			inputDone = 0;
 			outputDone = 0;
-			initAudioIn(buffer, size);
+			initAudioIn(buffer,size);
 		}
 
 		if(process)
