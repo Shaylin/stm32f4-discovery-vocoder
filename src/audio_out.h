@@ -1,8 +1,10 @@
 void initAudioOut(uint16_t* buffer, uint32_t size);
+void initAudioOut2(uint16_t* buffer, uint32_t size, uint32_t arr);
 
 void initAudioOutDAC(void);
 void initAudioOutGPIO(void);
 void initAudioOutTIM(void);
+void initAudioOutTIM2(uint32_t arr);
 void initAudioOutNVIC(void);
 void initAudioOutDMA(uint16_t* buffer, uint32_t size);
 
@@ -43,6 +45,20 @@ void initAudioOutTIM(void)
 	TIM_SelectOutputTrigger(TIM4, TIM_TRGOSource_Update);
 	TIM_Cmd(TIM4, ENABLE);
 }
+
+void initAudioOutTIM2(uint32_t arr)
+{ //DO NOT USE TIMER 6 - ITS TRGO DOES NOT EXIST - IT SEEMS TO USE TIMER2's instead
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
+	TIM_TimeBaseInitTypeDef TimerStruct;
+	TimerStruct.TIM_Period = arr-1;
+	TimerStruct.TIM_Prescaler = 1-1;
+	TimerStruct.TIM_ClockDivision = TIM_CKD_DIV1;
+	TimerStruct.TIM_CounterMode = TIM_CounterMode_Up;
+	TIM_TimeBaseInit(TIM4, &TimerStruct);
+	TIM_SelectOutputTrigger(TIM4, TIM_TRGOSource_Update);
+	TIM_Cmd(TIM4, ENABLE);
+}
+
 
 void initAudioOutNVIC(void)
 {
@@ -90,3 +106,16 @@ void initAudioOut(uint16_t* buffer, uint32_t size)
 	initAudioOutNVIC();
 	initAudioOutDMA(buffer,size);
 }
+
+void initAudioOut2(uint16_t* buffer, uint32_t size, uint32_t arr)
+{
+	DAC_DeInit();
+	TIM_DeInit(TIM4);
+	DMA_DeInit(DMA1_Stream5);
+	initAudioOutDAC();
+	initAudioOutGPIO();
+	initAudioOutTIM2(arr);
+	initAudioOutNVIC();
+	initAudioOutDMA(buffer,size);
+}
+

@@ -28,7 +28,6 @@ void DMA1_Stream5_IRQHandler(void)
 	if (DMA_GetITStatus(DMA1_Stream5, DMA_IT_TCIF5))
 	{
 		DMA_ClearITPendingBit(DMA1_Stream5, DMA_IT_TCIF5);
-		TIM_SetAutoreload(TIM4,5250-1);
 		outputDone = 1;
 	}
 }
@@ -61,7 +60,7 @@ int main(void)
 
 		if(process)
 		{
-			triCarrier(buffer,size,100);
+			vader(buffer,size);
 			process = 0;
 		}
 

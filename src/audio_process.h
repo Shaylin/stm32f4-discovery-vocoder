@@ -3,10 +3,13 @@
 
 void echo(uint16_t* buffer, uint32_t size,  uint16_t ms);
 void sineCarrier(uint16_t* buffer, uint32_t size, uint16_t freq);
+void doubleSineCarrier(uint16_t* buffer, uint32_t size, uint16_t freq);
 void squareCarrier(uint16_t* buffer, uint32_t size, uint16_t freq);
 void triCarrier(uint16_t* buffer, uint32_t size, uint16_t freq);
 void distort(uint16_t* buffer, uint32_t size, float level);
 void overdrive(uint16_t* buffer, uint32_t size);
+void vader(uint16_t* buffer, uint32_t size);
+void vibrato(uint16_t* , uint32_t size);
 
 void echo(uint16_t* buffer, uint32_t size, uint16_t ms)
 {
@@ -49,6 +52,25 @@ void sineCarrier(uint16_t* buffer, uint32_t size, uint16_t freq)
 	{
 		//The 1800 in this case is approximately the 1.5V offset on the input signal
 		float temp = (sinf(TWOPI*i/16000.0*freq)) * (buffer[i]-1800);
+		buffer[i] = temp+1800;
+	}
+	initAudioOut(buffer,size);
+	initAudioOut(buffer,size);
+}
+
+void doubleSineCarrier(uint16_t* buffer, uint32_t size, uint16_t freq)
+{
+	uint32_t i;
+	for(i=0; i<size; i++)
+	{
+		//The 1800 in this case is approximately the 1.5V offset on the input signal
+		float temp = (sinf(TWOPI*i/16000.0*freq)) * (buffer[i]-1800);
+		buffer[i] = temp+1800;
+	}
+	for(i=0; i<size; i++)
+	{
+		//The 1800 in this case is approximately the 1.5V offset on the input signal
+		float temp = (sinf(TWOPI*i/16000.0*freq/2.0)) * (buffer[i]-1800);
 		buffer[i] = temp+1800;
 	}
 	initAudioOut(buffer,size);
@@ -122,4 +144,23 @@ void overdrive(uint16_t* buffer, uint32_t size)
 	}
 	initAudioOut(buffer,size);
 	initAudioOut(buffer,size);
+}
+
+void vader(uint16_t* buffer, uint32_t size)
+{
+	echo(buffer, size, 60);
+	initAudioOut2(buffer,size,7200);
+	initAudioOut2(buffer,size,7200);
+}
+
+//Similar to echo - but the delay is varied according to an LFO
+void vibrato(uint16_t* , uint32_t size)
+{
+	uint32_t i;
+		for(i=0; i<size; i++)
+		{
+			int16_t temp = buffer[i] - 1800;
+			float val = temp/4096.0;
+			buffer[i] = (uint16_t)((val*val*val)*temp+1800);
+		}
 }
