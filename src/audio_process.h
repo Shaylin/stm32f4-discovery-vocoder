@@ -6,8 +6,8 @@ void sineCarrier(uint16_t* buffer, uint32_t size, uint16_t freq);
 void squareCarrier(uint16_t* buffer, uint32_t size, uint16_t freq);
 void triCarrier(uint16_t* buffer, uint32_t size, uint16_t freq);
 void vibrato(uint16_t* buffer, uint32_t size, uint16_t freq);
-void distort(uint16_t* buffer, uint32_t size, float level);
 void vader(uint16_t* buffer, uint32_t size);
+void probeDroid(uint16_t* buffer, uint32_t size);
 
 void echo(uint16_t* buffer, uint32_t size, uint16_t ms)
 {
@@ -40,8 +40,8 @@ void sineCarrier(uint16_t* buffer, uint32_t size, uint16_t freq)
 		float temp = (sinf(TWOPI*i/16000.0*freq)) * (buffer[i]-1800);
 		buffer[i] = temp+1800;
 	}
-	initAudioOut(buffer,size);
-	initAudioOut(buffer,size);
+	//initAudioOut(buffer,size);
+	//initAudioOut(buffer,size);
 }
 
 void squareCarrier(uint16_t* buffer, uint32_t size, uint16_t freq)
@@ -94,10 +94,18 @@ void triCarrier(uint16_t* buffer, uint32_t size, uint16_t freq)
 
 void vader(uint16_t* buffer, uint32_t size)
 {
-	distort(buffer, size, 1.0);
+	sineCarrier(buffer,size,42);
 	echo(buffer, size, 50);
-	initAudioOut2(buffer,size,7200);
-	initAudioOut2(buffer,size,7200);
+	initAudioOut2(buffer,size,6800);
+	initAudioOut2(buffer,size,6800);
+}
+
+void probeDroid(uint16_t* buffer, uint32_t size)
+{
+	sineCarrier(buffer,size,1500);
+	echo(buffer, size, 20);
+	initAudioOut2(buffer,size,5250);
+	initAudioOut2(buffer,size,5250);
 }
 
 //Similar to echo - but the delay is varied according to an LFO
@@ -117,28 +125,6 @@ void vibrato(uint16_t* buffer, uint32_t size, uint16_t freq)
 		delay = period - j;
 		j++;
 		buffer[i] = buffer[i]/2 +buffer[i-delay]/2;
-	}
-	initAudioOut(buffer,size);
-	initAudioOut(buffer,size);
-}
-
-//Applies a guitar-like non-linear distortion to the signal
-void distort(uint16_t* buffer, uint32_t size, float level)
-{
-	uint32_t i;
-	float temp,val;
-	for(i=0; i<size; i++)
-	{
-		temp = buffer[i]/4096.0 - 0.45;
-		if(temp>0)
-		{
-			val = 1.0 - exp(level*temp);
-		}
-		else
-		{
-			val = -1.0 + exp(-1.0*level*temp);
-		}
-		buffer[i] = 4096*val + 1800;
 	}
 	//initAudioOut(buffer,size);
 	//initAudioOut(buffer,size);

@@ -5,7 +5,10 @@
 #include "audio_in.h"
 #include "audio_process.h"
 #include "buttons.h"
+#include "lcd.h"
 #include <stdlib.h>
+
+uint8_t current = 0;
 
 uint8_t inputDone = 1;
 uint8_t outputDone = 1;
@@ -36,6 +39,9 @@ int main(void)
 {
 	buffer = (uint16_t*)malloc(sizeof(uint16_t)*size);
 	initButtons();
+	initLCD();
+	LCD_LINE(1);
+	LCD_STR("hello");
 
 	while (1)
 	{
@@ -60,7 +66,15 @@ int main(void)
 
 		if(process)
 		{
-			vader(buffer,size);
+			if(current)
+			{
+				probeDroid(buffer,size);
+			}
+			else
+			{
+				vader(buffer,size);
+			}
+			current = !current;
 			process = 0;
 		}
 
