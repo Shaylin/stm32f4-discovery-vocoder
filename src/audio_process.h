@@ -1,4 +1,7 @@
 #include <math.h>
+/**
+ * @brief Constant 2*pi for ease of calculations.
+ */
 #define TWOPI 6.28318530718
 
 void echo(uint16_t* buffer, uint32_t size,  uint16_t ms);
@@ -9,6 +12,15 @@ void vibrato(uint16_t* buffer, uint32_t size, uint16_t freq);
 void vader(uint16_t* buffer, uint32_t size);
 void probeDroid(uint16_t* buffer, uint32_t size);
 
+/**
+ * @brief Function that mixes in a delayed copy of the signal.
+ * A delay of 10ms correponds to a slight reverb. 50ms is a noticeable
+ * echo.
+ * @param buffer Pointer to the unsigned 16-bit integer signal buffer.
+ * @param size Size of the signal buffer.
+ * @param ms Amount of time in milliseconds to delay the second
+ * mixed in signal. 
+ */
 void echo(uint16_t* buffer, uint32_t size, uint16_t ms)
 {
 	uint32_t samples = ms*16;
@@ -27,7 +39,12 @@ void echo(uint16_t* buffer, uint32_t size, uint16_t ms)
 	}
 }
 
-//Performs amplitude modulation with a sine wave with user defined frequency
+/**
+ * @brief Performs amplitude modulation with a sine wave with user defined frequency
+ * @param buffer Pointer to the unsigned 16-bit integer signal buffer.
+ * @param size Amount of time in milliseconds to delay the second
+ * @param freq Frequency of the sine wave to modulate with
+ */
 void sineCarrier(uint16_t* buffer, uint32_t size, uint16_t freq)
 {
 	uint32_t i;
@@ -37,13 +54,14 @@ void sineCarrier(uint16_t* buffer, uint32_t size, uint16_t freq)
 		float temp = (sinf(TWOPI*i/16000.0*freq)) * (buffer[i]-1800);
 		buffer[i] = temp+1800;
 	}
-<<<<<<< HEAD
-=======
-	//initAudioOut(buffer,size);
-	//initAudioOut(buffer,size);
->>>>>>> origin/master
 }
 
+/**
+ * @brief Performs amplitude modulation with a square wave with user defined frequency
+ * @param buffer Pointer to the unsigned 16-bit integer signal buffer.
+ * @param size Amount of time in milliseconds to delay the second
+ * @param freq Frequency of the square wave to modulate with.
+ */
 void squareCarrier(uint16_t* buffer, uint32_t size, uint16_t freq)
 {
 	uint32_t i,j;
@@ -69,6 +87,12 @@ void squareCarrier(uint16_t* buffer, uint32_t size, uint16_t freq)
 	}
 }
 
+/**
+ * @brief Performs amplitude modulation with a triangle wave with user defined frequency
+ * @param buffer Pointer to the unsigned 16-bit integer signal buffer.
+ * @param size Amount of time in milliseconds to delay the second
+ * @param freq Frequency of the triangle wave to modulate with.
+ */
 void triCarrier(uint16_t* buffer, uint32_t size, uint16_t freq)
 {
 	uint32_t i,j;
@@ -88,24 +112,51 @@ void triCarrier(uint16_t* buffer, uint32_t size, uint16_t freq)
 	}
 }
 
+/**
+ * @brief Preset effect using echo, sine modulation and time stretching
+ * to produce a darth vader like voice.
+ * @param buffer Pointer to the unsigned 16-bit integer signal buffer.
+ * @param size Amount of time in milliseconds to delay the second
+ */
 void vader(uint16_t* buffer, uint32_t size)
 {
 	sineCarrier(buffer,size,42);
 	echo(buffer, size, 50);
+	//The method has to be called twice because of a quirk with the 
+	//way audio input and output with DMA works.
+	//Calling it twice resets all interrupt flags and set bits which 
+	//would otherwise prevent it from starting.
 	initAudioOut2(buffer,size,6800);
 	initAudioOut2(buffer,size,6800);
 }
 
+/**
+ * @brief Preset effect using echo and sine modulation
+ * to produce an imperial probe droid like voice.
+ * @param buffer Pointer to the unsigned 16-bit integer signal buffer.
+ * @param size Amount of time in milliseconds to delay the second
+ */
 void probeDroid(uint16_t* buffer, uint32_t size)
 {
 	sineCarrier(buffer,size,1500);
 	echo(buffer, size, 20);
+	//The method has to be called twice because of a quirk with the 
+	//way audio input and output with DMA works.
+	//Calling it twice resets all interrupt flags and set bits which 
+	//would otherwise prevent it from starting.
 	initAudioOut2(buffer,size,5250);
 	initAudioOut2(buffer,size,5250);
 }
 
-//Similar to echo - but the delay is varied according to an LFO
-//The delay amount varies from 0 to 50ms
+
+/**
+ * @brief Function that effectively performs a variable echo. The delay
+ * used in the signal is a triangular wave function in this case.
+ * @param buffer Pointer to the unsigned 16-bit integer signal buffer.
+ * @param size Amount of time in milliseconds to delay the second
+ * @param freq Frequency of the triangle wave used to calculate the
+ * varying delay amounts.
+ */
 void vibrato(uint16_t* buffer, uint32_t size, uint16_t freq)
 {
 	uint32_t i;
@@ -122,9 +173,4 @@ void vibrato(uint16_t* buffer, uint32_t size, uint16_t freq)
 		j++;
 		buffer[i] = buffer[i]/2 +buffer[i-delay]/2;
 	}
-<<<<<<< HEAD
-=======
-	//initAudioOut(buffer,size);
-	//initAudioOut(buffer,size);
->>>>>>> origin/master
 }

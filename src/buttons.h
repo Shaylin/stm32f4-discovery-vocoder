@@ -1,6 +1,11 @@
 void initButtons(void);
 int8_t checkButton(uint8_t butno);
 
+/**
+ * @brief Initialise Pins D0,D1 and D2 in input mode with pull up
+ * resistors. The buttons connected to these pins are expected to be
+ * hardware debounced and active high.
+ */
 void initButtons(void)
 {
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
@@ -12,6 +17,13 @@ void initButtons(void)
 	GPIO_Init(GPIOD, &GPIOStruct);
 }
 
+/**
+ * @brief 
+ * @param butno The number of the button where Pin DO correponds to button 0
+ * , Pin D1 corresponds to button 1 and pin D2 coresponds to button 2.
+ * @returns 1 if the button is being pushed (voltage on the pin is high)
+ * 0 otherwise.
+ */
 int8_t checkButton(uint8_t butno)
 {
 	if(butno==0)

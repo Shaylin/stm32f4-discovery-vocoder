@@ -1,4 +1,4 @@
-/* Includes */
+
 #include "stm32f4xx.h"
 #include "stm32f4_discovery.h"
 #include "audio_out.h"
@@ -8,14 +8,38 @@
 #include "lcd.h"
 #include <stdlib.h>
 
-uint8_t current = 0;
-
+/**
+ * @brief Variable that keeps track of the current effect being used to process the
+ * input signal.
+ * 0 = Darth Vader,
+ * 1 = Imperial Probe Droid
+ */
+uint8_t currentEffect = 0;
+/**
+ * @brief Flag which is set high when the audio input has been completed.
+ */
 uint8_t inputDone = 1;
+/**
+ * @brief Flag which is set high when the audio output has been completed.
+ */
 uint8_t outputDone = 1;
+/**
+ * @brief Flag which is set high to indicate the the audio input requires processing.
+ */
 uint8_t process = 0;
+/**
+ * @brief Pointer to the unsigned 16-bit integer signal buffer.
+ */
 uint16_t* buffer;
+/**
+ * @brief Size of the signal buffer.
+ */
 uint32_t size = 64000;
 
+/**
+ * @brief Interrupt handler which is triggered when DMA2_Stream0, or the ADC signal
+ * input has filled the buffer.
+ */
 void DMA2_Stream0_IRQHandler(void)
 {
 	if (DMA_GetITStatus(DMA2_Stream0, DMA_IT_TCIF0))
@@ -26,6 +50,10 @@ void DMA2_Stream0_IRQHandler(void)
 	}
 }
 
+/**
+ * @brief Interrupt handler which is triggered when DMA1_Stream5, or the DAC signal
+ * output has gone through the buffer.
+ */
 void DMA1_Stream5_IRQHandler(void)
 {
 	if (DMA_GetITStatus(DMA1_Stream5, DMA_IT_TCIF5))
@@ -35,24 +63,30 @@ void DMA1_Stream5_IRQHandler(void)
 	}
 }
 
+/**
+ * @brief Main loop which runs through the following procedures:
+ * Wait for button input to begin audio input, Wait for completion
+ * of input and for process flag to be set to begin audio processing,
+ * Begin audio output when processing is done, reset all flags when
+ * output is complete and wait once more for button input.
+ */
 int main(void)
 {
 	buffer = (uint16_t*)malloc(sizeof(uint16_t)*size);
 	initButtons();
 	initLCD();
-	LCD_LINE(1);
-	LCD_STR("hello");
 
 	while (1)
 	{
-		if(current)
+		//Manages LCD screen display
+		if(currentEffect==1)
 		{
 			LCD_LINE(1);
 			LCD_STR("Imperial Probe");
 			LCD_LINE(2);
 			LCD_STR("Droid");
 		}
-		else
+		else if(currentEffect==0)
 		{
 			LCD_LINE(1);
 			LCD_STR("Darth Vader     ");
@@ -60,28 +94,44 @@ int main(void)
 			LCD_STR("                ");
 		}
 
-		if(inputDone)
+		//Manages the LED indicators
+		if(inputDone && !process && outputDone)
 		{
 			STM_EVAL_LEDInit(LED4);
 			STM_EVAL_LEDOn(LED4);
-			STM_EVAL_LEDOff(LED5);
 		}
 		else
 		{
 			STM_EVAL_LEDOff(LED4);
+		}
+		if(!inputDone)
+		{
 			STM_EVAL_LEDInit(LED5);
 			STM_EVAL_LEDOn(LED5);
 		}
-		if(outputDone && checkButton(0)==1)
+		else
+		{
+			STM_EVAL_LEDOff(LED5);
+		}
+		if(!outputDone)
+		{
+			STM_EVAL_LEDInit(LED6);
+			STM_EVAL_LEDOn(LED6);
+		}
+		else
+		{
+			STM_EVAL_LEDOff(LED6);
+		}
+
+		if(inputDone && !process && outputDone && checkButton(0)==1)
 		{
 			inputDone = 0;
 			outputDone = 0;
 			initAudioIn(buffer,size);
 		}
-
 		if(process)
 		{
-			if(current)
+			if(currentEffect)
 			{
 				probeDroid(buffer,size);
 			}
@@ -89,22 +139,12 @@ int main(void)
 			{
 				vader(buffer,size);
 			}
-			current = !current;
+			currentEffect = !currentEffect;
 			process = 0;
 		}
 
-		if(checkButton(0)==1)
-		{
-			STM_EVAL_LEDInit(LED3);
-			STM_EVAL_LEDOn(LED3);
-		}
-		else
-		{
-			STM_EVAL_LEDOff(LED3);
-		}
 	}
 }
-
 
 void EVAL_AUDIO_TransferComplete_CallBack(uint32_t pBuffer, uint32_t Size){return;}
 uint16_t EVAL_AUDIO_GetSampleCallBack(void){return -1;}

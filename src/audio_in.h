@@ -1,5 +1,4 @@
 void initAudioIn(uint16_t* buffer, uint32_t size);
-
 void initAudioInGPIO(void);
 void initAudioInTIM(void);
 void initAudioInADC(void);
@@ -7,6 +6,10 @@ void initAudioInNVIC(void);
 void initAudioInDMA(uint16_t* buffer, uint32_t size);
 
 
+/**
+ * @brief Initialises GPIO Pin C2 in analog mode
+ * to receive signal inputs via the ADC
+ */
 void initAudioInGPIO(void)
 {
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC,ENABLE);
@@ -19,11 +22,15 @@ void initAudioInGPIO(void)
 	GPIO_Init(GPIOC, &GPIOStruct);
 }
 
-//Timer 2 Runs at 84MHz - Using 16000Hz sampling rate
+
+/**
+ * @brief Initialises timer 2 with a tick rate of 16000Hz
+ * to trigger the ADC to sample a signal at this rate
+ */
 void initAudioInTIM(void)
 {
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2,ENABLE);
-
+	//Timer 2 is clocked at 84MHz
 	TIM_TimeBaseInitTypeDef TimerStruct;
 	TimerStruct.TIM_Period = 5250-1;
 	TimerStruct.TIM_Prescaler = 1-1;
@@ -34,6 +41,11 @@ void initAudioInTIM(void)
 	TIM_Cmd(TIM2, ENABLE);
 }
 
+/**
+ * @brief Initialises the ADC in 12 bit mode to sample a signal
+ * on the positive edge of the timer 2 tick. DMA access is also 
+ * allowed after a conversion.
+ */
 void initAudioInADC(void)
 {
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1,ENABLE);
@@ -60,6 +72,12 @@ void initAudioInADC(void)
 	ADC_Cmd(ADC1, ENABLE);
 }
 
+/**
+ * @brief Initialise the NVIC to allow interupts for DMA2_Stream0
+ * which is the stream being used to transfer ADC data to a buffer.
+ * In this case, the interupt will be triggered when the buffer has 
+ * been filled up.
+ */
 void initAudioInNVIC(void)
 {
 	NVIC_InitTypeDef NVICStruct;
@@ -70,6 +88,13 @@ void initAudioInNVIC(void)
 	NVIC_Init(&NVICStruct);
 }
 
+/**
+ * @brief Initialises DMA to transfer the sampled data from the ADC to
+ * the buffer after a sucessful conversion. Also enables the triggering
+ * of an interrupt when the buffer has been filled.
+ * @param buffer Pointer to the unsigned 16-bit integer signal buffer.
+ * @param size Size of the signal buffer.
+ */
 void initAudioInDMA(uint16_t* buffer, uint32_t size)
 {
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2 ,ENABLE);
@@ -96,6 +121,12 @@ void initAudioInDMA(uint16_t* buffer, uint32_t size)
 	DMA_Cmd(DMA2_Stream0, ENABLE);
 }
 
+/**
+ * @brief De-initialises all peripherals needed for audio input and 
+ * Initialises them using the above methods.
+ * @param buffer Pointer to the unsigned 16-bit integer signal buffer.
+ * @param size Size of the signal buffer.
+ */
 void initAudioIn(uint16_t* buffer, uint32_t size)
 {
 	TIM_DeInit(TIM2);

@@ -1,6 +1,5 @@
 void initAudioOut(uint16_t* buffer, uint32_t size);
 void initAudioOut2(uint16_t* buffer, uint32_t size, uint32_t arr);
-
 void initAudioOutDAC(void);
 void initAudioOutGPIO(void);
 void initAudioOutTIM(void);
@@ -8,6 +7,10 @@ void initAudioOutTIM2(uint32_t arr);
 void initAudioOutNVIC(void);
 void initAudioOutDMA(uint16_t* buffer, uint32_t size);
 
+/**
+ * @brief Initialise the DAC in 12bit mode to output signal 
+ * sampes. Also allow DMA access to the DAC.
+ */
 void initAudioOutDAC(void)
 {
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_DAC, ENABLE);
@@ -20,6 +23,10 @@ void initAudioOutDAC(void)
 	DAC_Cmd(DAC_Channel_1, ENABLE);
 }
 
+/**
+ * @brief Initialise GPIO Pin A4 in analog mode to output
+ * a signal from the DAC.
+ */
 void initAudioOutGPIO(void)
 {
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
@@ -32,9 +39,15 @@ void initAudioOutGPIO(void)
 	GPIO_Init(GPIOA, &GPIOStruct);
 }
 
-//Timer 4 Runs at 84MHz - Using 16000Hz sampling rate
+/**
+ * @brief Initialise Timer 4 with a tick rate of 16000Hz
+ * to trigger the DAC to output at this rate.
+ */
 void initAudioOutTIM(void)
-{ //DO NOT USE TIMER 6 - ITS TRGO DOES NOT EXIST - IT SEEMS TO USE TIMER2's instead
+{
+	//Timer 4 Runs at 84MHz
+	//Do not use Timer 6 for this - It is not able to trigger the DAC
+	//Even though the documentation would have you believe otherwise.
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
 	TIM_TimeBaseInitTypeDef TimerStruct;
 	TimerStruct.TIM_Period = 5250-1;
@@ -46,8 +59,19 @@ void initAudioOutTIM(void)
 	TIM_Cmd(TIM4, ENABLE);
 }
 
+/**
+ * @brief An alternate timer initialisation where the user may define 
+ * the tick rate through the arr parameter. This initialisation is used 
+ * when a differrent audio playback rate is required for time stretching
+ * or pitch alterations.
+ * @param arr The value the timer has to count up to before a timer
+ * tick is generated. Timer frequency = (84MHz/(Prescaler+1))/Period.
+ */
 void initAudioOutTIM2(uint32_t arr)
-{ //DO NOT USE TIMER 6 - ITS TRGO DOES NOT EXIST - IT SEEMS TO USE TIMER2's instead
+{ 
+	//Timer 4 Runs at 84MHz
+	//Do not use Timer 6 for this - It is not able to trigger the DAC
+	//Even though the documentation would have you believe otherwise.
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
 	TIM_TimeBaseInitTypeDef TimerStruct;
 	TimerStruct.TIM_Period = arr-1;
@@ -60,6 +84,12 @@ void initAudioOutTIM2(uint32_t arr)
 }
 
 
+/**
+ * @brief Initialise the NVIC to allow interupts for DMA1_Stream5
+ * which is the stream being used to transfer signal data to the DAC.
+ * In this case, the interupt will be triggered when the buffer has 
+ * been emptied.
+ */
 void initAudioOutNVIC(void)
 {
 	NVIC_InitTypeDef NVICStruct;
@@ -70,6 +100,14 @@ void initAudioOutNVIC(void)
 	NVIC_Init(&NVICStruct);
 }
 
+/**
+ * @brief Initialises DMA to transfer the sampled data from the signal buffer
+ * to the DAC. Also enables the triggering
+ * of an interrupt when the buffer has been emptied.
+ * @param buffer Pointer to the unsigned 16-bit integer signal buffer.
+ * @param size Size of the signal buffer.
+
+ */
 void initAudioOutDMA(uint16_t* buffer, uint32_t size)
 {
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA1, ENABLE);
@@ -95,6 +133,12 @@ void initAudioOutDMA(uint16_t* buffer, uint32_t size)
 	DMA_Cmd(DMA1_Stream5, ENABLE);
 }
 
+/**
+ * @brief De-initialises all peripherals needed for audio output and 
+ * Initialises them using the above methods.
+ * @param buffer Pointer to the unsigned 16-bit integer signal buffer.
+ * @param size Size of the signal buffer.
+ */
 void initAudioOut(uint16_t* buffer, uint32_t size)
 {
 	DAC_DeInit();
@@ -107,6 +151,15 @@ void initAudioOut(uint16_t* buffer, uint32_t size)
 	initAudioOutDMA(buffer,size);
 }
 
+/**
+ * @brief De-initialises all peripherals needed for audio output and 
+ * Initialises them using the above methods. Is used to initialise
+ * playback at a different rate by changing the ARR of the timer.
+ * @param buffer Pointer to the unsigned 16-bit integer signal buffer.
+ * @param size Size of the signal buffer.
+ * @param arr The value the timer has to count up to before a timer
+ * tick is generated. Timer frequency = (84MHz/(Prescaler+1))/Period.
+ */
 void initAudioOut2(uint16_t* buffer, uint32_t size, uint32_t arr)
 {
 	DAC_DeInit();
