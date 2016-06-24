@@ -37,6 +37,11 @@ void sineCarrier(uint16_t* buffer, uint32_t size, uint16_t freq)
 		float temp = (sinf(TWOPI*i/16000.0*freq)) * (buffer[i]-1800);
 		buffer[i] = temp+1800;
 	}
+<<<<<<< HEAD
+=======
+	//initAudioOut(buffer,size);
+	//initAudioOut(buffer,size);
+>>>>>>> origin/master
 }
 
 void squareCarrier(uint16_t* buffer, uint32_t size, uint16_t freq)
@@ -117,4 +122,9 @@ void vibrato(uint16_t* buffer, uint32_t size, uint16_t freq)
 		j++;
 		buffer[i] = buffer[i]/2 +buffer[i-delay]/2;
 	}
+<<<<<<< HEAD
+=======
+	//initAudioOut(buffer,size);
+	//initAudioOut(buffer,size);
+>>>>>>> origin/master
 }
