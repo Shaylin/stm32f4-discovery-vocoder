@@ -1,28 +1,16 @@
 # stm32f4_discovery_vocoder
 A simple record & playback vocoder using the STM32F4 Discovery
 
-Features currently implemented:
-
-<<<<<<< HEAD
-Features currently working:
-1.Audio output using the DAC and DMA
-2.Audio input using the ADC and DMA
-3.Recording and playback at different sampling rates
-=======
+###Features currently working:
 * Audio output using the DAC and DMA
 * Audio input using the ADC and DMA
 * Recording and playback at different sampling rates
 * Amplitude modulation with sine, square and triangle waves
 * Adding echo and vibrato to signals
 * LCD screen output
->>>>>>> origin/master
+
 
 ###Pins used on the board:
-
-<<<<<<< HEAD
-Planned features:
-4.Modifiable output settings
-=======
 * A4 - DAC Audio Output
 * C2 - ADC Audio Input
 * D0,D1,D2 - Pushbutton Inputs
@@ -47,7 +35,6 @@ The wiring guide for the LCD Screen is as follows:
 * Pin14(D7) - Connect to Pin E14 on the microcontroller
 * Pin15(A) - Connect to 5V
 * Pin16(K) - Connect to ground
->>>>>>> origin/master
- 
+
   
 To run this project, open the project files using Atollic True Studio.
