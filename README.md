@@ -3,13 +3,13 @@ A simple record & playback vocoder using the STM32F4 Discovery
 
 
 Features currently working:
-  -Audio output using the DAC and DMA
-  -Audio input using the ADC and DMA
-  -Recording and playback at different sampling rates
+1.Audio output using the DAC and DMA
+2.Audio input using the ADC and DMA
+3.Recording and playback at different sampling rates
 
 
 Planned features:
-  -Modifiable output settings
+4.Modifiable output settings
  
   
 To run this project, open the project files using Atollic True Studio.
