@@ -17,6 +17,7 @@ A simple record & playback vocoder using the STM32F4 Discovery
 * E9,E10,E11,E12,E13,E14 - LCD Sceen Output
 
 The additional circuits which these pins will connect to are included in the documentation folder of this repository.
+Code documentation generated with doxygen is also in this folder.
 
 ###LCD Screen
 The LCD Screen used for this device is the QC1602A. This makes use of the HD44780 controller so any LCD using this controller with similar pins would work as well.
