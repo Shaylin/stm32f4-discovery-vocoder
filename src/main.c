@@ -34,7 +34,7 @@ uint16_t* buffer;
 /**
  * @brief Size of the signal buffer.
  */
-uint32_t size = 64000;
+uint32_t size = 48000;
 
 /**
  * @brief Interrupt handler which is triggered when DMA2_Stream0, or the ADC signal
@@ -79,7 +79,14 @@ int main(void)
 	while (1)
 	{
 		//Manages LCD screen display
-		if(currentEffect==1)
+		if(currentEffect==2)
+		{
+			LCD_LINE(1);
+			LCD_STR("Swoosh?      ");
+			LCD_LINE(2);
+			LCD_STR("                ");
+		}
+		else if(currentEffect==1)
 		{
 			LCD_LINE(1);
 			LCD_STR("Imperial Probe");
@@ -131,7 +138,11 @@ int main(void)
 		}
 		if(process)
 		{
-			if(currentEffect)
+			if(currentEffect==2)
+			{
+				swoosh(buffer,size);
+			}
+			else if(currentEffect==1)
 			{
 				probeDroid(buffer,size);
 			}
@@ -139,10 +150,13 @@ int main(void)
 			{
 				vader(buffer,size);
 			}
-			currentEffect = !currentEffect;
+			currentEffect++;
+			if(currentEffect>2)
+			{
+				currentEffect = 0 ;
+			}
 			process = 0;
 		}
-
 	}
 }
 
