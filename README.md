@@ -19,7 +19,7 @@ A simple record & playback vocoder using the STM32F4 Discovery
 The additional circuits which these pins will connect to are included in the documentation folder of this repository.
 
 ###LCD Screen
-The LCD Screen being is the QC1602A. This makes use of the HD44780 controller so any LCD using this controller with similar pins would work as well.
+The LCD Screen used for this device is the QC1602A. This makes use of the HD44780 controller so any LCD using this controller with similar pins would work as well.
 The wiring guide for the LCD Screen is as follows:
 * Pin1(VSS) - Connect to ground
 * Pin2(VDD) - Connect to 5V
