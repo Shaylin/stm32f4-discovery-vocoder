@@ -16,6 +16,8 @@ A simple record & playback vocoder using the STM32F4 Discovery
 * D0,D1,D2 - Pushbutton Inputs
 * E9,E10,E11,E12,E13,E14 - LCD Sceen Output
 
+The additional circuits which these pins will connect to are included in the documentation folder of this repository.
+
 ###LCD Screen
 The LCD Screen being is the QC1602A. This makes use of the HD44780 controller so any LCD using this controller with similar pins would work as well.
 The wiring guide for the LCD Screen is as follows:
