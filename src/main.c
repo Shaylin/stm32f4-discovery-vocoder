@@ -14,7 +14,7 @@
  * 0 = Darth Vader,
  * 1 = Imperial Probe Droid
  */
-uint8_t currentEffect = 0;
+int8_t currentEffect = 0;
 /**
  * @brief Flag which is set high when the audio input has been completed.
  */
@@ -75,6 +75,9 @@ int main(void)
 	buffer = (uint16_t*)malloc(sizeof(uint16_t)*size);
 	initButtons();
 	initLCD();
+	uint8_t prev0=0;
+	uint8_t prev1=0;
+	uint8_t prev2=0;
 
 	while (1)
 	{
@@ -82,7 +85,7 @@ int main(void)
 		if(currentEffect==2)
 		{
 			LCD_LINE(1);
-			LCD_STR("Swoosh?      ");
+			LCD_STR("Swoosh?        ");
 			LCD_LINE(2);
 			LCD_STR("                ");
 		}
@@ -99,6 +102,24 @@ int main(void)
 			LCD_STR("Darth Vader     ");
 			LCD_LINE(2);
 			LCD_STR("                ");
+		}
+
+		//Buttons used to cycle between effect presets
+		if(checkButton(2) && checkButton(2)!=prev2)
+		{
+			currentEffect++;
+			if(currentEffect>2)
+			{
+				currentEffect=0;
+			}
+		}
+		else if(checkButton(1) && checkButton(1)!=prev1)
+		{
+			currentEffect--;
+			if(currentEffect<0)
+			{
+				currentEffect=2;
+			}
 		}
 
 		//Manages the LED indicators
@@ -130,7 +151,7 @@ int main(void)
 			STM_EVAL_LEDOff(LED6);
 		}
 
-		if(inputDone && !process && outputDone && checkButton(0)==1)
+		if(inputDone && !process && outputDone && checkButton(0)==1 && checkButton(0)!=prev0)
 		{
 			inputDone = 0;
 			outputDone = 0;
@@ -150,13 +171,12 @@ int main(void)
 			{
 				vader(buffer,size);
 			}
-			currentEffect++;
-			if(currentEffect>2)
-			{
-				currentEffect = 0 ;
-			}
 			process = 0;
 		}
+
+		prev0 = checkButton(0);
+		prev1 = checkButton(1);
+		prev2 = checkButton(2);
 	}
 }
 
