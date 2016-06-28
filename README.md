@@ -8,7 +8,7 @@ A simple record & playback vocoder using the STM32F4 Discovery
 * Amplitude modulation with sine, square and triangle waves
 * Adding echo and vibrato to signals
 * LCD screen output
-
+* Cycling between effect presets
 
 ###Pins used on the board:
 * A4 - DAC Audio Output
