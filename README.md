@@ -1,7 +1,7 @@
 # stm32f4_discovery_vocoder
 A simple record & playback vocoder using the STM32F4 Discovery
 
-###Features currently working:
+### Features currently working:
 * Audio output using the DAC and DMA
 * Audio input using the ADC and DMA
 * Recording and playback at different sampling rates
@@ -10,7 +10,7 @@ A simple record & playback vocoder using the STM32F4 Discovery
 * LCD screen output
 * Cycling between effect presets
 
-###Pins used on the board:
+### Pins used on the board:
 * A4 - DAC Audio Output
 * C2 - ADC Audio Input
 * D0,D1,D2 - Pushbutton Inputs
@@ -19,7 +19,7 @@ A simple record & playback vocoder using the STM32F4 Discovery
 The additional circuits which these pins will connect to are included in the documentation folder of this repository.
 Code documentation generated with doxygen is also in this folder.
 
-###LCD Screen
+### LCD Screen
 The LCD Screen used for this device is the QC1602A. This makes use of the HD44780 controller so any LCD using this controller with similar pins would work as well.
 The wiring guide for the LCD Screen is as follows:
 * Pin1(VSS) - Connect to ground
